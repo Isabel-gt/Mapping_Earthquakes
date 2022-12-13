@@ -45,12 +45,31 @@ L.control.layers(baseMaps).addTo(map);
 // Grabbing our GeoJSON data.
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
     console.log(data);
-  // // Creating a GeoJSON layer with the retrieved data.
+    function styleInfo(feature) {
+      return {
+        opacity: 1,
+        fillOpacity: 1,
+        fillColor: "#ffae42",
+        color: "#000000",
+        radius: getRadius(),
+        stroke: true,
+        weight: 0.5
+      };
+    }
+    function getRadius(magnitude) {
+      if (magnitude === 0) {
+        return 1;
+      }
+      return magnitude * 4;
+    }
+  // Creating a GeoJSON layer with the retrieved data.
   L.geoJSON(data, {
-    onEachFeature: function(feature, layer) {
-        console.log(layer);
-        layer.bindPopup("<h4> Location: " + feature.properties.place + "</h4> <hr> <h4> Magnitude:  " +feature.properties.mag + "</h4>");
-        }
-  }).addTo(map);
-  // L.geoJSON(data).addTo(map);
-});
+    // We turn each feature into a circleMarker on the map.
+    pointToLayer: function(feature, latlng) {
+                console.log(data);
+                return L.circleMarker(latlng);
+            },
+      style: styleInfo
+      
+        }).addTo(map);
+    });
